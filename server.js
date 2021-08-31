@@ -6,7 +6,7 @@ const nedb = require('nedb');
 const port = process.env.PORT || 3000;
 
 let database = [];
-let db = new nedb({autoload: true});
+let db = new nedb({autoload: true, filename: "database.db"});
 
 // Parse JSON bodies (as sent by API clients)
 app.use(express.urlencoded({ extended: true }))
