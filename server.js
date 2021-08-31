@@ -32,6 +32,11 @@ app.set('view engine', 'ejs');
 app.listen(port, console.log(`listening on ${port}`));
 
 app.use(express.static('public'));
+
+app.get('/dashboard', (req, res) => {
+    res.render('index'); // render the login page
+}) 
+
 app.get('/', (req, res) => {
     res.render('login'); // render the login page
 }) 
@@ -40,7 +45,11 @@ app.get('/signup', (req, res) => {
     res.render('signup'); // render the login page
 }) 
 
-app.get('/login', (req, res) => {
+app.get('/login', passport.authenticate('local', {
+    successRedirect: '/dashboard',
+    failureRedirect: '/login',
+    failureFlash: true
+}),(req, res) => {
     res.render('login'); // render the login page
 }) 
 
