@@ -1,3 +1,7 @@
+if (process.env.NODE_ENV !== 'production') {
+    require('dotenv').config();
+}
+
 const express = require('express');
 const app = express();
 const bcrypt = require('bcrypt');
@@ -16,7 +20,9 @@ app.use(express.urlencoded({ extended: true }))
 app.use(express.json());
 app.use(flash())
 app.use(session({
-    secret: process.env.SESSION_SECRET
+    secret: process.env.SESSION_SECRET,
+    resave: false,
+    saveUninitialized: false
 }))
 app.set('view engine', 'ejs');
 app.listen(port, console.log(`listening on ${port}`));
