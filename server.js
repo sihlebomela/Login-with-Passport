@@ -15,6 +15,14 @@ app.get('/', (req, res) => {
     res.render('login'); // render the login page
 }) 
 
+app.get('/signup', (req, res) => {
+    res.render('signup'); // render the login page
+}) 
+
+app.get('/login', (req, res) => {
+    res.render('login'); // render the login page
+}) 
+
 app.post('/signup', (req, res) => {
     const data = req.body;
     console.log(data)
