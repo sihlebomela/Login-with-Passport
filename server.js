@@ -2,15 +2,22 @@ const express = require('express');
 const app = express();
 const bcrypt = require('bcrypt');
 const nedb = require('nedb');
-
+const passport = require('passport');
+const initializePassport = require('./passport-config');
+const flash = require('express-flash');
+const { session } = require('passport');
 const port = process.env.PORT || 3000;
 
 let db = new nedb({autoload: true, filename: "database.db"});
+initializePassport.initialize(passport, db.findOne({email}, (err, doc) => {return doc.email}))
 
 // Parse JSON bodies (as sent by API clients)
 app.use(express.urlencoded({ extended: true }))
 app.use(express.json());
-
+app.use(flash())
+app.use(session({
+    secret: process.env.SESSION_SECRET
+}))
 app.set('view engine', 'ejs');
 app.listen(port, console.log(`listening on ${port}`));
 
