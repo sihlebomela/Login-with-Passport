@@ -24,6 +24,10 @@ app.use(session({
     resave: false,
     saveUninitialized: false
 }))
+
+app.use(passport.initialize())
+app.use(passport.session());
+
 app.set('view engine', 'ejs');
 app.listen(port, console.log(`listening on ${port}`));
 
