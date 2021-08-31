@@ -21,8 +21,6 @@
     "express-flash": "^0.0.2",
     "express-session": "^1.17.2",
     "jsonwebtoken": "^8.5.1",
-    "nedb": "^1.8.0",
-    "passport": "^0.4.1",
-    "passport-local": "^1.0.0"
+    "nedb": "^1.8.0"
   }
 }
