@@ -12,7 +12,7 @@ app.listen(port, console.log(`listening on ${port}`));
 
 app.use(express.static('public'));
 app.get('/', (req, res) => {
-    res.render('index'); // render the login page
+    res.render('login'); // render the login page
 }) 
 
 app.post('/signup', (req, res) => {
