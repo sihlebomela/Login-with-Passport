@@ -1,10 +1,12 @@
 const express = require('express');
 const app = express();
 const bcrypt = require('bcrypt');
+const nedb = require('nedb');
 
 const port = process.env.PORT || 3000;
 
 let database = [];
+let db = new nedb({autoload: true});
 
 // Parse JSON bodies (as sent by API clients)
 app.use(express.urlencoded({ extended: true }))
@@ -30,10 +32,13 @@ app.post('/signup', async(req, res) => {
     const data = req.body;
     try {
         const hashedPassword = bcrypt.hashSync(data.password, 10);
-        database.push({
+        // store to database
+        db.insert({
             created: Date.now().toString(),
             user: data.name,
             password: hashedPassword
+        }, (err) => {
+            return 'error occured'
         })
         res.redirect('/login'); 
     } catch (error) {
