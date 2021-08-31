@@ -1,33 +1,17 @@
-if (process.env.NODE_ENV !== 'production') {
-    require('dotenv').config();
-}
 
 const express = require('express');
 const app = express();
 const bcrypt = require('bcrypt');
 const nedb = require('nedb');
-const passport = require('passport');
-const initializePassport = require('./passport-config');
-const flash = require('express-flash');
-const { session } = require('passport');
 const port = process.env.PORT || 3000;
 
 let db = new nedb({autoload: true, filename: "database.db"});
-initializePassport.initialize(passport, db.findOne({email}, (err, doc) => {return doc.email}))
+
+require('dotenv').config();
 
 // Parse JSON bodies (as sent by API clients)
 app.use(express.urlencoded({ extended: true }))
 app.use(express.json());
-app.use(flash())
-app.use(session({
-    secret: process.env.SESSION_SECRET,
-    resave: false,
-    saveUninitialized: false
-}))
-
-app.use(passport.initialize())
-app.use(passport.session());
-
 app.set('view engine', 'ejs');
 app.listen(port, console.log(`listening on ${port}`));
 
@@ -45,11 +29,7 @@ app.get('/signup', (req, res) => {
     res.render('signup'); // render the login page
 }) 
 
-app.get('/login', passport.authenticate('local', {
-    successRedirect: '/dashboard',
-    failureRedirect: '/login',
-    failureFlash: true
-}),(req, res) => {
+app.get('/login',(req, res) => {
     res.render('login'); // render the login page
 }) 
 
@@ -77,3 +57,9 @@ app.post('/login', (req, res) => {
     console.log(data)
     res.status(200).json('hello!')
 })
+
+function getUserByEmail(email) {
+    return db.findOne({email}, (err, doc) => {
+        return doc
+    })
+}
