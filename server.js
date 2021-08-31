@@ -5,7 +5,6 @@ const nedb = require('nedb');
 
 const port = process.env.PORT || 3000;
 
-let database = [];
 let db = new nedb({autoload: true, filename: "database.db"});
 
 // Parse JSON bodies (as sent by API clients)
@@ -45,7 +44,6 @@ app.post('/signup', async(req, res) => {
         res.redirect('/register');
     }
 
-    console.log(database)
 })
 
 app.post('/login', (req, res) => {
