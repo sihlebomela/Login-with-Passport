@@ -41,7 +41,7 @@ app.post('/signup', async(req, res) => {
         })
         res.redirect('/login'); 
     } catch (error) {
-        res.redirect('/register');
+        res.status(500).json('a server error occured');
     }
 
 })
