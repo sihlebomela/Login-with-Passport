@@ -20,3 +20,9 @@ app.post('/signup', (req, res) => {
     console.log(data)
     res.status(200).json('hello!')
 })
+
+app.post('/login', (req, res) => {
+    const data = req.body;
+    console.log(data)
+    res.status(200).json('hello!')
+})
