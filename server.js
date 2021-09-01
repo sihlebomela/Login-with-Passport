@@ -3,10 +3,8 @@ const express = require('express');
 const app = express();
 const bcrypt = require('bcrypt');
 const nedb = require('nedb');
+const jwt = require('jsonwebtoken');
 const port = process.env.PORT || 3000;
-
-//! import routes 
-const authRoute = require('./routes/auth');
 
 let db = new nedb({autoload: true, filename: "database.db"});
 
@@ -20,7 +18,8 @@ app.listen(port, console.log(`listening on ${port}`));
 
 app.use(express.static('public'));
 
-app.get('/dashboard', (req, res) => {
+// ! GET
+app.get('/dashboard', auth, (req, res) => {
     res.render('index'); // render the login page
 }) 
 
@@ -34,19 +33,61 @@ app.get('/signup', (req, res) => {
 
 app.get('/login',(req, res) => {
     res.render('login'); // render the login page
-}) 
+})
 
-app.post('/signup', async(req, res) => {
+//! POST REQUESTS
+app.post('/register', (req, res) => {
     const data = req.body;
     try {
         const hashedPassword = bcrypt.hashSync(data.password, 10);
         storeUser(db, data, hashedPassword);
+        res.status(200).json('success')
     } catch (error) {
-        res.status(500).json('Oops! something went wrong :(');
+        res.status(500).json('Oops! something went wrong :('  + error );
     }
-
 })
 
+app.post('/login', (req, res) => {
+    // todo: check if login is valid
+    const data = req.body;
+    db.findOne({email: data.email}, {}, (err, doc) => {
+        console.log(doc)
+        if (err) {
+            throw new Error('Oops error on DB');
+        }
+
+        // if the user is found
+        if(doc) {
+            // compare
+            const passwordValid = bcrypt.compareSync(data.password, doc.password)
+            if (passwordValid) {
+                //create token 
+                const token = createToken('', process.env.JWT_SECRET);
+                req.headers.authorization = token;
+                console.log(req.headers.authorization)
+                res.status(200).json({
+                    message: 'login successful',
+                    token, status: 200
+                })
+            } else {
+                res.status(200).json({
+                    message: 'invalid password',
+                    status: 200
+                })
+            }
+        } else {
+            res.status(404).json({
+                message: 'user with that email not found' ,
+                status: 404
+            })
+        }
+    })
+})
+
+function createToken(payload, secret) {
+    const token = jwt.sign(payload, secret);
+    return token;
+}
 
 function getUserByEmail(email) {
     return db.findOne({email}, (err, doc) => {
@@ -58,9 +99,25 @@ function storeUser(db, data, hashedPassword) {
         // store to database
         db.insert({
             created: Date.now().toString(),
-            user: data.name,
+            username: data.name,
+            email: data.email,
             password: hashedPassword
         }, (err) => {
             return 'error occured'
         })
+}
+
+function auth(req, res, next) {
+    try {
+    const token = req.headers.authorization.split(' ');
+    if (token[0] === 'Bearer' && jwt.verify(token[1], process.env.JWT_SECRET)) {
+        next();
+        console.log('valid')
+    }} catch (e) {
+        if (e.name == 'JsonWebTokenError') {
+            res.status(401).json('Unauthorized');
+        } else {
+            res.status(401).json('Unauthorized');
+        }
+    }
 }
