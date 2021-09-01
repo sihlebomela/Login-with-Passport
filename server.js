@@ -5,6 +5,9 @@ const bcrypt = require('bcrypt');
 const nedb = require('nedb');
 const port = process.env.PORT || 3000;
 
+//! import routes 
+const authRoute = require('./routes/auth');
+
 let db = new nedb({autoload: true, filename: "database.db"});
 
 require('dotenv').config();
@@ -37,6 +40,21 @@ app.post('/signup', async(req, res) => {
     const data = req.body;
     try {
         const hashedPassword = bcrypt.hashSync(data.password, 10);
+        storeUser(db, data, hashedPassword);
+    } catch (error) {
+        res.status(500).json('Oops! something went wrong :(');
+    }
+
+})
+
+
+function getUserByEmail(email) {
+    return db.findOne({email}, (err, doc) => {
+        return doc
+    })
+}
+
+function storeUser(db, data, hashedPassword) {
         // store to database
         db.insert({
             created: Date.now().toString(),
@@ -45,21 +63,4 @@ app.post('/signup', async(req, res) => {
         }, (err) => {
             return 'error occured'
         })
-        res.redirect('/login'); 
-    } catch (error) {
-        res.status(500).json('a server error occured');
-    }
-
-})
-
-app.post('/login', (req, res) => {
-    const data = req.body;
-    console.log(data)
-    res.status(200).json('hello!')
-})
-
-function getUserByEmail(email) {
-    return db.findOne({email}, (err, doc) => {
-        return doc
-    })
 }
