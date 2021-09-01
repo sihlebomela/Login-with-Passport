@@ -4,7 +4,21 @@ form.addEventListener('submit', (ev) => {
     ev.preventDefault();
     
     let data = new URLSearchParams(new FormData(form));
-    sendRequest('/signup', 'POST', data);
+    if(form.getAttribute('action') == '/register') {
+        sendRequest('/register', 'POST', data).then(res => {
+            if (res.status == 200) {
+                location.assign('/login')
+            }
+        })
+    } else {
+        sendRequest('/login', 'POST', data).then(res => {
+            if (res.status == 200) {
+                //store token
+                localStorage.setItem('lwpToken', res.token);
+                location.assign('/dashboard');
+            }
+        })
+    }
 })
 
 /**
