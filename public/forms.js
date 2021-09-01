@@ -28,13 +28,14 @@ form.addEventListener('submit', (ev) => {
  * @param {any} data the data to attach to the body header
  * @returns response from server
  */
-async function sendRequest(route, method, data) {
+export async function sendRequest(route, method, data, auth = '') {
     const options = {
         method: method,
         headers : {
             'Content-Type' : 'application/x-www-form-urlencoded'
         },
-        body : data
+        body : data,
+        authorization: auth
     }
    
     let res = await fetch(route, options)
