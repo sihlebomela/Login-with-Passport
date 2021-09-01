@@ -20,7 +20,7 @@ app.use(express.static('public'));
 
 // ! GET
 app.get('/dashboard', auth, (req, res) => {
-    res.render('index'); // render the login page
+    res.status(200).json({message: 'success', status: 200}); // render the login page
 }) 
 
 app.get('/', (req, res) => {
@@ -84,8 +84,9 @@ app.post('/login', (req, res) => {
     })
 })
 
+
 function createToken(payload, secret) {
-    const token = jwt.sign(payload, secret);
+    const token = jwt.sign(payload, secret,{expiresIn: '60'});
     return token;
 }
 
@@ -109,15 +110,17 @@ function storeUser(db, data, hashedPassword) {
 
 function auth(req, res, next) {
     try {
-    const token = req.headers.authorization.split(' ');
-    if (token[0] === 'Bearer' && jwt.verify(token[1], process.env.JWT_SECRET)) {
+    const token = req.headers.authorization
+    console.log(token, 'middleware running...')
+    console.log(jwt.verify(token, process.env.JWT_SECRET), 'verifying token ...');
+    if (jwt.verify(token, process.env.JWT_SECRET)) {
         next();
         console.log('valid')
     }} catch (e) {
         if (e.name == 'JsonWebTokenError') {
-            res.status(401).json('Unauthorized');
+            res.status(401).json('Unauthorized - 1' + e);
         } else {
-            res.status(401).json('Unauthorized');
+            res.status(401).json('Unauthorized - 2' + e);
         }
     }
 }
