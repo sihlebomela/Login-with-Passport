@@ -3,6 +3,9 @@ const app = express();
 const bcrypt = require('bcrypt');
 const nedb = require('nedb');
 const jwt = require('jsonwebtoken');
+const auth = require('./auth');
+const utils = require('./utils');
+
 const port = process.env.PORT || 3000;
 
 let db = new nedb({
