@@ -1,5 +1,7 @@
 //! this file is for accessing useful function
 
+const jwt = require('jsonwebtoken');
+
 // function for creating token
 function createToken(payload, secret, expiresIn = '1d') { // token expires in one day by default
     const token = jwt.sign(payload, secret, {
