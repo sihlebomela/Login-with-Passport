@@ -20,7 +20,7 @@ app.use(express.static('public'));
 
 // ! GET
 app.get('/dashboard', auth, (req, res) => {
-    res.status(200).json({message: 'success', status: 200}); // render the login page
+    res.status(200).render('index'); // render the dashboard page
 }) 
 
 app.get('/', (req, res) => {
@@ -63,11 +63,10 @@ app.post('/login', (req, res) => {
             if (passwordValid) {
                 //create token 
                 const token = createToken({email: doc.email}, process.env.JWT_SECRET);
-                req.headers.authorization = token;
-                console.log(req.headers.authorization)
                 res.status(200).json({
-                    message: 'login successful',
-                    token, status: 200
+                    message: 'success',
+                    token, 
+                    status: 200
                 })
             } else {
                 res.status(200).json({
@@ -111,7 +110,6 @@ function storeUser(db, data, hashedPassword) {
 function auth(req, res, next) {
     try {
         const token = req.headers.authorization.split(' ').indexOf('Bearer') != -1 ? req.headers.authorization.split(' ')[1] : req.headers.authorization;
-        console.log(token)
         jwt.verify(token, process.env.JWT_SECRET);
         console.log('success');
         next();
