@@ -62,7 +62,7 @@ app.post('/login', (req, res) => {
             const passwordValid = bcrypt.compareSync(data.password, doc.password)
             if (passwordValid) {
                 //create token 
-                const token = createToken('', process.env.JWT_SECRET);
+                const token = createToken({email: doc.email}, process.env.JWT_SECRET);
                 req.headers.authorization = token;
                 console.log(req.headers.authorization)
                 res.status(200).json({
@@ -86,7 +86,7 @@ app.post('/login', (req, res) => {
 
 
 function createToken(payload, secret) {
-    const token = jwt.sign(payload, secret,{expiresIn: '60'});
+    const token = jwt.sign(payload, secret, {algorithm : 'HS256'});
     return token;
 }
 
@@ -110,17 +110,16 @@ function storeUser(db, data, hashedPassword) {
 
 function auth(req, res, next) {
     try {
-    const token = req.headers.authorization
-    console.log(token, 'middleware running...')
-    console.log(jwt.verify(token, process.env.JWT_SECRET), 'verifying token ...');
-    if (jwt.verify(token, process.env.JWT_SECRET)) {
+        const token = req.headers.authorization.split(' ').indexOf('Bearer') != -1 ? req.headers.authorization.split(' ')[1] : req.headers.authorization;
+        console.log(token)
+        jwt.verify(token, process.env.JWT_SECRET);
+        console.log('success');
         next();
-        console.log('valid')
-    }} catch (e) {
+    } catch (e) {
         if (e.name == 'JsonWebTokenError') {
-            res.status(401).json('Unauthorized - 1' + e);
+            res.status(401).json('Unauthorized - 1 ' + e);
         } else {
-            res.status(401).json('Unauthorized - 2' + e);
+            res.status(401).json('Unauthorized - 2 ' + e);
         }
     }
 }
