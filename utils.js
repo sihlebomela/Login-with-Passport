@@ -3,7 +3,7 @@
 const jwt = require('jsonwebtoken');
 
 // function for creating token
-function createToken(payload, secret, expiresIn = '1d') { // token expires in one day by default
+export function createToken(payload, secret, expiresIn = '1d') { // token expires in one day by default
     const token = jwt.sign(payload, secret, {
         algorithm: process.env.JWT_ALGO,
         expiresIn,
@@ -11,7 +11,7 @@ function createToken(payload, secret, expiresIn = '1d') { // token expires in on
     return token;
 }
 
-function getUserByEmail(email) {
+export function getUserByEmail(email) {
     return db.findOne({
         email
     }, (err, doc) => {
@@ -19,7 +19,7 @@ function getUserByEmail(email) {
     })
 }
 
-function storeUser(db, data, hashedPassword) {
+export function storeUser(db, data, hashedPassword) {
     // store to database
     db.insert({
         created: Date.now().toString(),
@@ -29,4 +29,10 @@ function storeUser(db, data, hashedPassword) {
     }, (err) => {
         return 'error occured'
     })
+}
+
+module.exports = {
+    createToken,
+    getUserByEmail,
+    storeUser
 }
