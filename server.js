@@ -2,7 +2,6 @@ const express = require('express');
 const app = express();
 const bcrypt = require('bcrypt');
 const nedb = require('nedb');
-const jwt = require('jsonwebtoken');
 const auth = require('./auth');
 const utils = require('./utils');
 
@@ -48,7 +47,7 @@ app.post('/register', (req, res) => {
     const data = req.body;
     try {
         const hashedPassword = bcrypt.hashSync(data.password, 10);
-        storeUser(db, data, hashedPassword);
+        utils.storeUser(db, data, hashedPassword);
         res.status(200).json('success')
     } catch (error) {
         res.status(500).json('Oops! something went wrong :(' + error);
@@ -79,7 +78,7 @@ app.post('/login', (req, res) => {
                 };
 
                 //create token 
-                const token = createToken(payload, process.env.JWT_SECRET);
+                const token = utils.createToken(payload, process.env.JWT_SECRET);
 
                 // everything went well, so respond with token 
                 res.status(200).json({
