@@ -58,23 +58,30 @@ app.post('/login', (req, res) => {
 
         // if the user is found
         if(doc) {
-            // compare
             const passwordValid = bcrypt.compareSync(data.password, doc.password)
+            // validate password
             if (passwordValid) {
+                // token payload
+                const payload = { created: doc.created, username: doc.username, email: doc.email };
+                
                 //create token 
-                const token = createToken({email: doc.email}, process.env.JWT_SECRET);
+                const token = createToken(payload, process.env.JWT_SECRET);
+               
+                // everything went well, so respond with token 
                 res.status(200).json({
                     message: 'success',
                     token, 
                     status: 200
-                })
+                });
             } else {
+                // password is invalid
                 res.status(200).json({
                     message: 'invalid password',
                     status: 200
                 })
             }
         } else {
+            // no user in database with the given email
             res.status(404).json({
                 message: 'user with that email not found' ,
                 status: 404
@@ -84,8 +91,8 @@ app.post('/login', (req, res) => {
 })
 
 
-function createToken(payload, secret) {
-    const token = jwt.sign(payload, secret, {algorithm : 'HS256'});
+function createToken(payload, secret, expiresIn = '1d') { // token expires in one day by default
+    const token = jwt.sign(payload, secret, { algorithm : process.env.JWT_ALGO, expiresIn });
     return token;
 }
 
@@ -107,17 +114,23 @@ function storeUser(db, data, hashedPassword) {
         })
 }
 
+//middleware function for protecting route and validating jwt 
 function auth(req, res, next) {
     try {
+        // get token depending on how it is sent to the server
         const token = req.headers.authorization.split(' ').indexOf('Bearer') != -1 ? req.headers.authorization.split(' ')[1] : req.headers.authorization;
+        // verify
         jwt.verify(token, process.env.JWT_SECRET);
         console.log('success');
-        next();
+        next(); // should lead here if it all went well
     } catch (e) {
+        // error occured with the token or the code could not process token
         if (e.name == 'JsonWebTokenError') {
             res.status(401).json('Unauthorized - 1 ' + e);
+            console.log('error occured ', e);
         } else {
             res.status(401).json('Unauthorized - 2 ' + e);
+            console.log('error occured ', e);
         }
     }
 }
