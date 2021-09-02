@@ -1,4 +1,6 @@
 //middleware function for protecting route and validating jwt 
+const jwt = require('jsonwebtoken');
+
 function auth(req, res, next) {
     const token = req.headers.authorization;
 
