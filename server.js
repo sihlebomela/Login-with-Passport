@@ -102,7 +102,7 @@ app.post('/login', (req, res) => {
 })
 
 
-function createToken(payload, secret, expiresIn = '5000') { // token expires in one day by default
+function createToken(payload, secret, expiresIn = '1d') { // token expires in one day by default
     const token = jwt.sign(payload, secret, {
         algorithm: process.env.JWT_ALGO,
         expiresIn,
