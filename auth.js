@@ -1,5 +1,5 @@
 //middleware function for protecting route and validating jwt 
-function auth(req, res, next) {
+export function auth(req, res, next) {
     const token = req.headers.authorization;
 
     // if there is no token
@@ -35,3 +35,5 @@ function auth(req, res, next) {
         }
     }
 }
+
+module.exports = auth
