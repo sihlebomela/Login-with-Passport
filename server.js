@@ -31,7 +31,7 @@ app.get('/dashboard', (req, res) => {
 })
 
 app.get('/', (req, res) => {
-    res.render('login'); // render the login page
+    res.render('index'); // render the login page
 })
 
 app.get('/signup', (req, res) => {
