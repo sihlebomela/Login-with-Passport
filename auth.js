@@ -1,7 +1,7 @@
 //middleware function for protecting route and validating jwt 
 const jwt = require('jsonwebtoken');
 
-function auth(req, res, next) {
+function authenticateToken(req, res, next) {
     const token = req.headers.authorization;
 
     // if there is no token
@@ -38,4 +38,4 @@ function auth(req, res, next) {
     }
 }
 
-module.exports = auth;
+module.exports = authenticateToken;

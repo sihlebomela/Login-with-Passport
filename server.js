@@ -4,6 +4,7 @@ const bcrypt = require('bcrypt');
 const nedb = require('nedb');
 const auth = require('./auth');
 const utils = require('./utils');
+const authenticateToken = require('./auth');
 
 const port = process.env.PORT || 3000;
 
@@ -25,7 +26,7 @@ app.listen(port, console.log(`listening on ${port}`));
 app.use(express.static('public'));
 
 // ! GET
-app.get('/dashboard', auth, (req, res) => {
+app.get('/dashboard', authenticateToken, (req, res) => {
     res.status(200).render('index'); // render the dashboard page
 })
 
