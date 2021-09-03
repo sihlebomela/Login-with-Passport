@@ -26,7 +26,7 @@ app.listen(port, console.log(`listening on ${port}`));
 app.use(express.static('public'));
 
 // ! GET
-app.get('/dashboard', authenticateToken, (req, res) => {
+app.get('/dashboard', (req, res) => {
     res.status(200).render('index'); // render the dashboard page
 })
 
