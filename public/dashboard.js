@@ -1,29 +1,25 @@
-sendRequest('/api/dashboard', 'GET', '', localStorage.getItem('jwtlwpToken')).then((res) => {
+window.onload = () => {
 
-}).catch((err) => {
-    console.log('an error occured: ', err)
-})
+    let loader = document.querySelector('.loader-container');
+    
+    fetch('/api/dashboard', {
+        headers: {
+            Authorization: localStorage.getItem('jwtlwpToken')
+        }
+    }).then(res => {
+        res.json().then(json => {
+            if (json.status === 200) {
+                // hide loade after 1 second of response code 200
+                setTimeout(() => {
+                    loader.classList.add('hide');
+                }, 1000)
+            } else { // token is expired or invalid
+                // delete token
+                localStorage.removeItem('jwtlwpToken');
+                location.assign('/login'); // go to login
+            }
+    
+        })
+    })
 
-/**
- * Sends request to route
- * @param {String} route The endpoint to send request to
- * @param {String} method The request method
- * @param {any} data the data to attach to the body header
- * @param {String} authToken the token to be attached on the authorization header to access secure route
- * @returns response from server
- */
- async function sendRequest(route, method, data, authToken = '') {
-    const options = {
-        method: method,
-        headers : {
-            'Content-Type' : 'application/x-www-form-urlencoded'
-        },
-        body : data,
-        authorization: authToken
-    }
-   
-    let res = await fetch(route, options)
-    let json =  res.json(); 
-
-    return json;
 }
