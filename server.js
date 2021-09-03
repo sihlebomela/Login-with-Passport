@@ -43,6 +43,14 @@ app.get('/login', (req, res) => {
     res.render('login'); // render the login page
 })
 
+app.get('/api/dashboard', authenticateToken, (req, res) => {
+    res.status(200).json({ 
+        message: 'success',
+        data: {},
+        status: 200
+    });
+})
+
 //! POST REQUESTS
 app.post('/register', (req, res) => {
     const data = req.body;
