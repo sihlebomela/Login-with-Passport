@@ -21,18 +21,25 @@ function authenticateToken(req, res, next) {
 
             // error occured with the token or the code could not process token
             if (e.name == 'JsonWebTokenError') {
-                console.log('an error occured with jwt :', e.message)
-                return res.redirect(400, '/login?error=' + encodeURIComponent('just_gotta_login'));
-                // res.status(401).json('Unauthorized - 1 ' + e);
-                console.log('error occured 1', e);
+                console.log('an error occured with jwt: ', e.message)
+                return res.status(400).json({
+                    message: 'please login',
+                    status: 400
+                });
 
                 // if token expired
             } else if (e.name == 'TokenExpiredError') {
-                console.log('token expired user sent to login..')
-                return res.redirect(400, '/login?error=' + encodeURIComponent('session_expired_just_gotta_login'));
+                console.log('token expired: ', e.expiredAt)
+                return res.status(400).json({
+                    message: 'please login',
+                    status: 400
+                });
             } else {
-                return res.redirect('/login?error=' + encodeURIComponent('please_login'));
-                // res.status(401).json('Unauthorized - 2 ' + e);
+                console.log('unknown error occured: ', e)
+                return res.status(400).json({
+                    message: 'oppsie! error occured, please try again later...',
+                    status: 400
+                });
             }
         }
     }
