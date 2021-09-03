@@ -3,7 +3,7 @@
 const jwt = require('jsonwebtoken');
 
 // function for creating token
-function createToken(payload, secret, expiresIn = '1d') { // token expires in one day by default
+function createToken(payload, secret, expiresIn = '600000') { // token expires in 10min  by default
     const token = jwt.sign(payload, secret, {
         algorithm: process.env.JWT_ALGO,
         expiresIn,
