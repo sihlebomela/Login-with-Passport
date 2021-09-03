@@ -14,7 +14,7 @@ form.addEventListener('submit', (ev) => {
         sendRequest('/login', 'POST', data).then(res => {
             if (res.status == 200) {
                 //store token
-                localStorage.setItem('lwpToken', res.token);
+                localStorage.setItem('jwtlwpToken', res.token);
                 location.assign('/dashboard');
             }
         })
@@ -28,7 +28,7 @@ form.addEventListener('submit', (ev) => {
  * @param {any} data the data to attach to the body header
  * @returns response from server
  */
-export async function sendRequest(route, method, data, auth = '') {
+async function sendRequest(route, method, data, auth = '') {
     const options = {
         method: method,
         headers : {
